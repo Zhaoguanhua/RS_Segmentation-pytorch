@@ -16,7 +16,7 @@ class Metrics(base.Metric):
     def __init__(self,num_classes):
         super().__init__()
         self.num_classes=num_classes
-        self.hist=torch.zeros((num_classes,num_classes))
+        self.hist=torch.zeros((num_classes,num_classes)).cuda()
 
     def _fast_hist(self,pred,target):
 
@@ -54,7 +54,7 @@ class Metrics(base.Metric):
         self.hist.fill_(0)
 
 
-class Metrics_test():
+class Metrics_test(base.Metric):
     def __init__(self,num_classes):
         super().__init__()
         self.num_classes=num_classes
@@ -65,8 +65,8 @@ class Metrics_test():
     def test2(self):
         print("test2")
 
-# a=Metrics_test(num_classes=5)
-# a.add_batch()
-# a.tes
+a=Metrics_test(num_classes=5)
+a.add_batch()
 
-a=Metrics(num_classes=5)
+#
+# a=Metrics(num_classes=5)

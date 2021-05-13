@@ -97,4 +97,3 @@ class Precision(base.Metric):
             ignore_channels=self.ignore_channels,
         )
 
-a=IoU()
