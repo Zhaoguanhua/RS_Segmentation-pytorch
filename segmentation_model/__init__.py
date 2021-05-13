@@ -7,3 +7,4 @@
 @File    : __init__.py.py
 @Software: PyCharm
 """
+from .pointrend import PointHead,PointRend,deeplabv3
