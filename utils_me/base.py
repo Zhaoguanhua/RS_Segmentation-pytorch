@@ -18,6 +18,9 @@ class Activation(nn.Module):
         else:
             raise ValueError
 
+    def forward(self,x):
+        return self.activation(x)
+
 class BaseObject(nn.Module):
 
     def __init__(self, name=None):

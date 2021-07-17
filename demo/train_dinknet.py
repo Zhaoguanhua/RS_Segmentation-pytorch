@@ -3,8 +3,8 @@
 """
 @Author  : zhaoguanhua
 @Email   : 
-@Time    : 2021/5/13 14:49
-@File    : train_demo.py
+@Time    : 2021/7/16 22:07
+@File    : train_dinknet.py
 @Software: PyCharm
 """
 
@@ -16,22 +16,19 @@ import datetime
 
 import segmentation_model as smp
 import utils_me as utils
-import train_pointRend
 from dataset import *
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
 ENCODER='res50'
 CLASSES=['background','building']
-DEVICE='cpu'
+DEVICE='cuda'
 
 n_classes=len(CLASSES)
 
-model=smp.PointRend(
-    smp.deeplabv3(pretrained=True,resnet=ENCODER,num_classes=n_classes),
-    smp.PointHead(in_c=512+n_classes,num_classes=n_classes))
-print(model)
 
+model= smp.DinkNet50(num_classes=1)
+print(model)
 
 root_dir=r"D:\test_data\building_test"
 
@@ -54,7 +51,7 @@ valid_loader=DataLoader(valid_dataset,batch_size=batch_size,shuffle=False,num_wo
 
 
 #loss function
-loss=utils.losses.CrossEntropyLoss()
+loss=utils.losses.bce_loss(alpha=0.8,smoothing=0.1,n_classes=n_classes)+utils.losses.DiceLoss()
 
 train_metrics=['Mean Acc','Mean Iou']
 valid_metrics=['Mean Acc','Mean Iou','Class Acc','Class Iou']
@@ -67,7 +64,7 @@ optimizer=torch.optim.SGD(model.parameters(),lr=base_lr,momentum=0.99,weight_dec
 
 max_iter=round(len(train_dataset)/batch_size)*max_epoch
 
-train_epoch=train_pointRend.TrainEpoch(
+train_epoch=utils.train.TrainEpoch(
     model,
     loss=loss,
     metrics=train_metrics,
@@ -79,7 +76,7 @@ train_epoch=train_pointRend.TrainEpoch(
     verbose=True
 )
 
-valid_epoch=train_pointRend.ValidEpoch(
+valid_epoch=utils.train.ValidEpoch(
     model,
     loss=loss,
     metrics=valid_metrics,

@@ -1,5 +1,5 @@
 import torch.nn as nn
-
+import torch
 from . import base
 from . import functional as F
 from .base import Activation
@@ -42,6 +42,23 @@ class DiceLoss(base.Loss):
             ignore_channels=self.ignore_channels,
         )
 
+
+class bce_loss(base.Loss):
+    def __init__(self,n_classes,alpha=0.5,smoothing=0.0):
+        super(bce_loss,self).__init__()
+        self.n_classes=n_classes
+        self.alpha=alpha
+        self.smoothing=smoothing
+
+    def forward(self,preds,labels):
+        eps=1e-7
+        #label smoothing
+        labels=labels*(1-self.smoothing)+self.smoothing/self.n_classes
+
+        loss_1=-1*self.alpha*torch.log(preds+eps)*labels
+        loss_0=-1*(1-self.alpha)*torch.log(1-preds+eps)*(1-labels)
+
+        return torch.mean(loss_0+loss_1)
 
 class L1Loss(nn.L1Loss, base.Loss):
     pass

@@ -8,3 +8,4 @@
 @Software: PyCharm
 """
 from .pointrend import PointHead,PointRend,deeplabv3
+from .Dinknet import DinkNet34,DinkNet50,DinkNet101
