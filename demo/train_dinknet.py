@@ -27,7 +27,9 @@ DEVICE='cuda'
 n_classes=len(CLASSES)
 
 
-model= smp.DinkNet50(num_classes=1)
+# model= smp.DinkNet50(num_classes=1)
+model=smp.DinkNet_cspdarknet53(num_classes=1)
+# model=smp.DinkNet_SE50(num_classes=1)
 print(model)
 
 root_dir=r"D:\test_data\building_test"
@@ -40,9 +42,7 @@ train_label=os.path.join(root_dir,"train","label")
 valid_data=os.path.join(root_dir,"valid","image")
 valid_label=os.path.join(root_dir,"valid","label")
 
-train_dataset=Dataset(train_data,train_label,
-                        # augmentation=get_training_augmentation()
-                      )
+train_dataset=Dataset(train_data,train_label,augmentation=get_training_augmentation() )
 valid_dataset=Dataset(valid_data,valid_label)
 
 batch_size=2
@@ -51,7 +51,7 @@ valid_loader=DataLoader(valid_dataset,batch_size=batch_size,shuffle=False,num_wo
 
 
 #loss function
-loss=utils.losses.bce_loss(alpha=0.8,smoothing=0.1,n_classes=n_classes)+utils.losses.DiceLoss()
+loss=utils.losses.bce_loss(alpha=0.5,smoothing=0.1,n_classes=n_classes)+utils.losses.DiceLoss()
 
 train_metrics=['Mean Acc','Mean Iou']
 valid_metrics=['Mean Acc','Mean Iou','Class Acc','Class Iou']
@@ -124,7 +124,7 @@ for i in range(0,max_epoch):
         print('Model saved at epoh {}!'.format(i))
 
     if i%20==0:
-        torch.save(model.state_dict(),ENCODER+"_segmentation_model.pth")
+        torch.save(model.state_dict(),ENCODER+"_segmentation_model_"+str(i)+".pth")
 
 train_writer.close()
 valid_writer.close()

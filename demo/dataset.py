@@ -11,7 +11,7 @@ import os
 import cv2
 import numpy as np
 from torch.utils.data import Dataset as BaseDataSet
-# import albumentation as albu
+import albumentations as albu
 
 class Dataset(BaseDataSet):
     def __init__(
@@ -44,12 +44,18 @@ class Dataset(BaseDataSet):
         return len(self.ids)
 
 
-# def get_training_augmentaion():
-#     train_transform=[
-#         albu.Hor
-#     ]
-#
-#     return albu.Compose(train_transform)
+def get_training_augmentaion():
+    train_transform=[
+        albu.OneOf([
+            albu.HorizontalFlip(p=0.5), #水平翻转
+            albu.VerticalFlip(p=0.5),#垂直翻转
+            albu.RandomRotate90(p=0.5), #旋转90、180、270
+            ]),
+        albu.HueSaturationValue(hue_shift_limit=15,sat_shift_limit=15,val_shift_limit=15,p=0.2),
+        albu.ShiftScaleRotate(shift_limit=0.1,scale_limit=0.1,rotate_limit=15,p=0.2)
+    ]
+
+    return albu.Compose(train_transform)
 
 def preprocess_input(x,mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225],input_space="RGB",**kwargs):
     if input_space=="BGR":

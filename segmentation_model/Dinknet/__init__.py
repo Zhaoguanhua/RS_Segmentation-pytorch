@@ -8,3 +8,4 @@
 @Software: PyCharm
 """
 from .dinknet import DinkNet34,DinkNet50,DinkNet101
+from .dinknet import DinkNet_SE50,DinkNet_cspdarknet53
